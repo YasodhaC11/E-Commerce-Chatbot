@@ -7,6 +7,12 @@ This chatbot currently supports two intents:
 
 -**sql**: Activated when users request product listings or information based on real-time database queries. eg. Show me all nike shoes below Rs. 3000.
 
+![Chatbot Demo](https://github.com/YasodhaC11/E-Commerce-Chatbot/blob/main/app/resources/product-ss.png))
+
+## Architecture
+
+![Chatbot Demo](https://github.com/YasodhaC11/E-Commerce-Chatbot/blob/main/app/resources/product-ss.png))
+
 ## 🚀 Features
 -**Intelligent Query Routing** – Uses semantic-router with sentence-transformers/all-MiniLM-L6-v2 to classify user queries into FAQ or product search intents.
 
