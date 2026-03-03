@@ -1,22 +1,28 @@
 import pandas as pd
 from pathlib import Path
 import chromadb
+from openai import OpenAI
 from chromadb.utils import embedding_functions
-from groq import Groq
 from dotenv import load_dotenv
 import os
 
+# SETTING UP THE ENV
 load_dotenv()
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 faqs_path=Path(__file__).parent/"resources/faq_data.csv"
 
 if not faqs_path.exists():
     raise FileNotFoundError(f"FAQ file not found at: {faqs_path} ")
 
-chroma_client=chromadb.Client()
+# CREATING CHROMA CLIENT
+chroma_client = chromadb.PersistentClient(path="./chroma_db")
 collection_name_faq="faqs"
-ef=embedding_functions.SentenceTransformerEmbeddingFunction()
-groq_client=Groq()
+ef = embedding_functions.OpenAIEmbeddingFunction(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    model_name="text-embedding-3-small")
+
+openai_client=OpenAI()
 
 def ingest_faq_data(path):
     if collection_name_faq not in [c.name for c in chroma_client.list_collections()]:
@@ -35,7 +41,7 @@ def ingest_faq_data(path):
         print(f"Collection {collection_name_faq} already exists!")
 
 def get_relevant_qa(query):
-    collection=chroma_client.get_collection(name=collection_name_faq)
+    collection=chroma_client.get_collection(name=collection_name_faq,embedding_function=ef)
     result=collection.query(
         query_texts=[query],
         n_results=2)
@@ -43,7 +49,7 @@ def get_relevant_qa(query):
 
 def faq_chain(query):
     result=get_relevant_qa(query)
-    context="".join([r.get("answer") for r in result["metadatas"][0]])
+    context="\n\n".join([r.get("answer") for r in result["metadatas"][0]])
     answer=generate_answer(query,context)
     return answer
 def generate_answer(query,context):
@@ -52,14 +58,14 @@ def generate_answer(query,context):
     QUESTION:{query}
     CONTEXT:{context}
     '''
-    chat_completion = groq_client.chat.completions.create(
+    chat_completion = openai_client.chat.completions.create(
         messages=[
             {
                 "role": "user",
                 "content": prompt
             }
         ],
-        model=os.environ["GROQ_MODEL"],
+        model=os.environ["OPENAI_MODEL"],
     )
 
     return chat_completion.choices[0].message.content

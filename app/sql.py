@@ -5,12 +5,13 @@ import os
 from groq import Groq
 from pathlib import Path
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
-GROQ_MODEL=os.getenv("GROQ_MODEL")
+openai_model=os.getenv("OPENAI_MODEL")
 db_path = Path(__file__).parent/"db.sqlite"
 
-client_sql=Groq()
+openai_client_sql=OpenAI()
 
 sql_prompt = """You are an expert in understanding the database schema and generating SQL queries for a natural language question asked
 pertaining to the data you have. The schema is provided in the schema tags. 
@@ -46,7 +47,7 @@ For example:
 """
 
 def generate_sql_query(question):
-    chat_completion = client_sql.chat.completions.create(
+    chat_completion = openai_client_sql.chat.completions.create(
         messages=[
             {
             "role":"system",
@@ -57,7 +58,7 @@ def generate_sql_query(question):
                 "content": question
             }
         ],
-        model=os.environ["GROQ_MODEL"],
+        model=os.environ["OPENAI_MODEL"],
         temperature=0.2,
         max_tokens=1024
     )
@@ -71,7 +72,7 @@ def run_query(query):
             return df
 
 def data_comprehension(question,context):
-    chat_completion = client_sql.chat.completions.create(
+    chat_completion = openai_client_sql.chat.completions.create(
         messages=[
             {
             "role":"system",
@@ -82,7 +83,7 @@ def data_comprehension(question,context):
                 "content": f"QUESTION:{question} DATA:{context}",
             }
         ],
-        model=os.environ["GROQ_MODEL"],
+        model=os.environ["OPENAI_MODEL"],
         temperature=0.2
         #max_tokens=1024
     )

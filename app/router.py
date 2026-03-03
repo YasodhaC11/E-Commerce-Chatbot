@@ -60,9 +60,14 @@ sql = Route(
         "Products with more than 40% off",
     ]
 )
+general = Route(
+    name="chitchat",
+    utterances=["Hello", "Hi", "Thanks", "Goodbye", "How are you?"]
+)
 
-router = SemanticRouter(routes=[faq, sql], encoder=encoder,auto_sync="local")
+router = SemanticRouter(routes=[faq, sql,general], encoder=encoder,auto_sync="local")
 
 if __name__ == "__main__":
     print(router("What is your policy on defective product?").name)
     print(router("Pink Puma shoes in price range 5000 to 1000").name)
+    print(router("Hi").name)
