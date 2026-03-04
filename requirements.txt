@@ -1,0 +1,13 @@
+streamlit
+openai
+chromadb
+pandas
+openpyxl
+semantic-router
+sentence-transformers
+python-dotenv
+groq
+sqlalchemy
+torch
+transformers
+huggingface-hub

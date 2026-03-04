@@ -8,7 +8,7 @@ import os
 
 # SETTING UP THE ENV
 load_dotenv()
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+#os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 faqs_path=Path(__file__).parent/"resources/faq_data.csv"
 
@@ -65,7 +65,7 @@ def generate_answer(query,context):
                 "content": prompt
             }
         ],
-        model=os.environ["OPENAI_MODEL"],
+        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
     )
 
     return chat_completion.choices[0].message.content

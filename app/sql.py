@@ -2,13 +2,12 @@ import re
 import sqlite3
 import pandas as pd
 import os
-from groq import Groq
 from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
-openai_model=os.getenv("OPENAI_MODEL")
+openai_model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 db_path = Path(__file__).parent/"db.sqlite"
 
 openai_client_sql=OpenAI()
@@ -58,7 +57,7 @@ def generate_sql_query(question):
                 "content": question
             }
         ],
-        model=os.environ["OPENAI_MODEL"],
+        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
         temperature=0.2,
         max_tokens=1024
     )
@@ -83,7 +82,7 @@ def data_comprehension(question,context):
                 "content": f"QUESTION:{question} DATA:{context}",
             }
         ],
-        model=os.environ["OPENAI_MODEL"],
+        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
         temperature=0.2
         #max_tokens=1024
     )
