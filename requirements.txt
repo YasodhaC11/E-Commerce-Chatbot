@@ -8,6 +8,5 @@ sentence-transformers
 python-dotenv
 groq
 sqlalchemy
-torch
 transformers
 huggingface-hub
